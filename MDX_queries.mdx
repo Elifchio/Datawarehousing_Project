@@ -1,0 +1,145 @@
+ -- Assignment 2
+WITH 
+MEMBER [Measures].[TotalDamage] AS
+    ROUND(
+        SUM(
+            [Date].[Month].MEMBERS,  
+            [Measures].[Damage]
+        ), 
+        3  
+    )
+
+MEMBER [Measures].[RoundedDamage] AS
+    ROUND([Measures].[Damage], 3)  
+
+SELECT 
+    { 
+        [Measures].[RoundedDamage],      
+        [Measures].[TotalDamage]  
+    } ON COLUMNS,  
+    NONEMPTYCROSSJOIN(
+        [Geography].[Location Key].MEMBERS,  
+        [Date].[Month].MEMBERS  
+    ) ON ROWS
+FROM [Group ID_14_2024]
+
+
+
+ -- Assignment 3
+WITH 
+MEMBER [Measures].[Damage1] AS
+  ROUND(
+    AVG(
+        [Date].[Crash Date].MEMBERS,  
+        [Measures].[Damage]  
+    ), 
+    3  
+  )
+
+MEMBER [Measures].[Avg_Damage_Per_Unit] AS
+    ROUND(
+        IIF(
+            [Measures].[Num Units] <> 0, 
+            [Measures].[Damage1] / [Measures].[Num Units], 
+            NULL
+        ), 
+        3
+    )
+
+SELECT 
+    { 
+        [Measures].[Damage_Per_Unit]  
+    } ON COLUMNS, 
+    [Date].[Year].MEMBERS ON ROWS  
+FROM 
+    [Group ID_14_2024]
+
+
+ -- Assignment 4
+WITH 
+MEMBER [Measures].[Damage Sum] AS
+    ROUND(
+SUM(
+        [Date].[Crash Date].MEMBERS,  
+        [Measures].[Damage]  
+        ) , 
+        3  
+    )
+
+
+MEMBER [Measures].[Damage Change (%)] AS
+ROUND(
+    IIF(
+        [Date].[Year].CurrentMember.Lag(1) IS NULL,  
+        NULL,  
+        IIF(
+            ([Measures].[Damage Sum], [Date].[Year].CurrentMember.Lag(1)) = 0,  
+            0, 
+            (
+                ([Measures].[Damage Sum] - 
+                ([Measures].[Damage Sum], [Date].[Year].CurrentMember.Lag(1)))  
+                / ([Measures].[Damage Sum], [Date].[Year].CurrentMember.Lag(1)) * 100  
+            )
+        )
+        ) , 
+        3  
+    )
+
+SELECT 
+    { 
+        [Measures].[Damage Sum], 
+        [Measures].[Damage Change (%)]  
+    } ON COLUMNS, 
+
+    NONEMPTYCROSSJOIN(
+        [Location Key].[Location Key].MEMBERS, 
+        [Date].[Year].MEMBERS 
+    ) ON ROWS
+
+FROM 
+    [Group ID_14_2024]
+
+
+-- Assignment 6
+
+WITH 
+MEMBER [Measures].[TopPersonIdPerYear] AS
+    TOPCOUNT(
+        [Person].[Person Id].MEMBERS,
+        1,  -- 
+        [Measures].[DamageSum]  
+    ).ITEM(0).NAME  
+
+MEMBER [Measures].[TopPersonDamageRaw] AS
+    IIF(
+        [Person].[Person Id].CURRENTMEMBER.NAME = [Measures].[TopPersonIdPerYear],
+        [Measures].[DamageSum], 
+        NULL
+    )  
+
+MEMBER [Measures].[TopPersonDamage] AS
+    ROUND(
+        [Measures].[TopPersonDamageRaw],
+        3
+    )  
+
+SELECT 
+   NON EMPTY {[Measures].[TopPersonIdPerYear], [Measures].[TopPersonDamage]} ON COLUMNS, 
+   NON EMPTY (
+        [Vehicle].[Vehicle Type].MEMBERS *
+        [Date].[Year].MEMBERS
+    ) ON ROWS
+FROM [Group ID_14_2024]
+
+
+
+ -- Assignment 8.1
+SELECT 
+   [Date].[Year].Members ON ROWS,
+   TopCount(
+      {[Cause].[Prim Contributory Cause].Members},
+      3,
+      (2 * [Measures].[Prim Contributory Cause Count] + [Measures].[Sec Contributory Cause Count])
+   ) ON COLUMNS
+FROM 
+   [Group ID_14_2024]
