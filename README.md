@@ -7,6 +7,7 @@ Dataset: https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/8
 Project Overview: Data Warehouse & OLAP Cube Development
 This project involved transforming raw data from a publicly available dataset into structured, relational data for analysis. 
 The project followed a systematic approach that covered the entire data lifecycle, from initial understanding to the creation of an OLAP cube for business analytics.
+Report_project.pdf includes brief explanation of the whole project.
 
 Project Steps:
 
