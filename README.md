@@ -1,6 +1,7 @@
 Project created by 
 
 Elif Yilmaz
+
 Alice Pietriccioli
 
 Dataset: https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if/about_data
