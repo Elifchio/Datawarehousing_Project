@@ -20,7 +20,7 @@ try:
         "SERVER=tcp:lds.di.unipi.it;"
         "DATABASE=Group_ID_14_DB;"
         "UID=Group_ID_14;"
-        "PWD=NV7KJPDZ;"
+        "PWD=XXXXXXXX;"
     )
     connection = pyodbc.connect(connection_string)
     print("Connection successful!")
